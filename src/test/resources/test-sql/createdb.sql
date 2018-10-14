@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS authors (
+  id SERIAL NOT NULL,
+  name VARCHAR NOT NULL
+);
+
+TRUNCATE TABLE authors;
+
+CREATE TABLE IF NOT EXISTS books (
+  id SERIAL NOT NULL,
+  name VARCHAR NOT NULL,
+  author_id BIGINT
+);
+
+TRUNCATE TABLE books;
+
+CREATE TABLE IF NOT EXISTS notable_quotes (
+  id SERIAL NOT NULL,
+  content VARCHAR NOT NULL,
+  book_id BIGINT
+);
+
+TRUNCATE TABLE notable_quotes;
