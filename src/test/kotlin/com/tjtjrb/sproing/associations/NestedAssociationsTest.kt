@@ -73,7 +73,7 @@ class NestedAssociationsTest {
             LEFT JOIN notable_quotes q ON q.book_id = b.id
             WHERE a.id = :authorId
         """
-        val rows = db.query(query, paramMap("authorId" to ursula.id!!), ResultsWithAssociationsExtractor(Author::class, AuthorWithBookAliasRow::class))!!
+        val rows = db.query(query, paramMap("authorId" to ursula.id!!), extract(into=Author::class, from=AuthorWithBookAliasRow::class))!!
 
         assertThat(rows.size).isEqualTo(1)
         val ursula = rows.first()

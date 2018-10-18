@@ -3,6 +3,7 @@ package com.tjtjrb.sproing.associations.testbooks
 import com.tjtjrb.sproing.associations.ResultsWithAssociationsExtractor
 import com.tjtjrb.sproing.associations.WithPrefix
 import com.tjtjrb.sproing.associations.WithRootEntity
+import com.tjtjrb.sproing.associations.extract
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
@@ -64,7 +65,7 @@ class AuthorRepo(private val dataSource: DataSource) {
     )
 
     fun findByIdHydrated(id: Long): Author {
-        return db.query(FIND_ALL_HYDRATED_QUERY, paramMap("id" to id), ResultsWithAssociationsExtractor(Author::class, HydratedAuthorRow::class))!!.first()
+        return db.query(FIND_ALL_HYDRATED_QUERY, paramMap("id" to id), extract(Author::class, HydratedAuthorRow::class))!!.first()
     }
 }
 

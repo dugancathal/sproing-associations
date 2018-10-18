@@ -55,7 +55,7 @@ class QueryWithPrefixTests {
             FROM authors a
             INNER JOIN books b ON b.author_id = a.id
         """
-        val rows = db.query(query, extract(AuthorWithBookAliasRow::class, into = Author::class))!!
+        val rows = db.query(query, extract(into = Author::class, from = AuthorWithBookAliasRow::class))!!
 
         assertThat(rows.size).isEqualTo(2)
         assertThat(rows.map { it.name }).containsExactlyInAnyOrder("Ursula Le Guin", "Terry Pratchett")

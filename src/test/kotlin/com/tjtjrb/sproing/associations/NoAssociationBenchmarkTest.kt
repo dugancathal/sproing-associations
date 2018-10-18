@@ -23,9 +23,6 @@ class NoAssociationBenchmarkTest {
     @Autowired
     lateinit var db: NamedParameterJdbcTemplate
 
-    @WithPrefix(enabled = false)
-    data class FlattenedRow(val id: Long, val name: String)
-
     @Before
     fun setUp() {
         db.update("INSERT INTO authors(name) VALUES (:name)", mapOf("name" to "Ursula Le Guin"))
@@ -34,13 +31,13 @@ class NoAssociationBenchmarkTest {
     }
 
     @Test
-    @BenchmarkOptions(benchmarkRounds = 100)
+    @BenchmarkOptions(benchmarkRounds = 1000)
     fun reflectiveTest() {
-        db.query("SELECT * FROM authors", extract(FlattenedRow::class, into = Author::class))
+        db.query("SELECT * FROM authors", extract(into = Author::class))
     }
 
     @Test
-    @BenchmarkOptions(benchmarkRounds = 100)
+    @BenchmarkOptions(benchmarkRounds = 1000)
     fun hardCodedAlgorithm() {
         db.query("SELECT * FROM authors") { rs, _ ->
             Author(rs.getLong("id"), rs.getString("name"), emptyList())

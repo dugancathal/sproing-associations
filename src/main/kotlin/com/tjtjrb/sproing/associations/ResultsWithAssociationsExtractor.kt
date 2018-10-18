@@ -9,12 +9,16 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-class ResultsWithAssociationsExtractor<Result : Any, RowClass : Any>(private val resultClass: KClass<Result>, private val rowClass: KClass<RowClass>) : ResultSetExtractor<List<Result>> {
+class ResultsWithAssociationsExtractor<Result : Any, RowClass : Any>(
+    private val resultClass: KClass<Result>,
+    private val rowClass: KClass<RowClass>,
+    private val rootPrefix: String
+) : ResultSetExtractor<List<Result>> {
     override fun extractData(rs: ResultSet): List<Result> {
         val preAssociationMappings = mutableListOf<RowClass>()
 
         while (rs.next()) {
-            val flatRow = rs.extract(rowClass)
+            val flatRow = rs.extract(rowClass, rootPrefix)
             preAssociationMappings.add(flatRow!!)
         }
 
@@ -58,9 +62,16 @@ class ResultsWithAssociationsExtractor<Result : Any, RowClass : Any>(private val
     private fun genericTypeOf(param: KParameter) = param.type.arguments[0].type!!.classifier as KClass<*>
 }
 
-fun <Result : Any, RowClass : Any> extract(from: KClass<RowClass>, into: KClass<Result>) =
-    ResultsWithAssociationsExtractor(into, from)
+fun <Result : Any, RowClass : Any> extract(
+    into: KClass<Result>,
+    from: KClass<RowClass>,
+    rootPrefix: String = ""
+) = ResultsWithAssociationsExtractor(into, from, rootPrefix)
 
+fun <Result : Any> extract(
+    into: KClass<Result>,
+    rootPrefix: String = ""
+) = extract(into, into, rootPrefix)
 
 private fun <T : Any> Any.propOfType(primaryEntityClass: KClass<T>): T? {
     val prop = this::class.memberProperties.find { it.returnType.classifier == primaryEntityClass }!!

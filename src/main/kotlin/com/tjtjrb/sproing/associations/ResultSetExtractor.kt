@@ -11,7 +11,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
-fun <T : Any> ResultSet.extract(klass: KClass<T>, columnPrefix: String = getEntityAliasPrefix(klass)): T? {
+fun <T : Any> ResultSet.extract(klass: KClass<T>, columnPrefix: String): T? {
     val params = klass.primaryConstructor!!.parameters.map { param ->
         val paramClass = param.type.classifier!! as KClass<*>
         when {
@@ -45,7 +45,7 @@ private fun <T : Any> ResultSet.getField(columnName: String, param: KClass<T>): 
     return ValidParam(field as T)
 }
 
-private fun getEntityAliasPrefix(param: KAnnotatedElement): String {
+fun getEntityAliasPrefix(param: KAnnotatedElement): String {
     val prefix = param.findAnnotation<WithPrefix>()
     if (prefix != null) {
         return if (prefix.enabled) prefix.value else ""
